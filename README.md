@@ -1,6 +1,8 @@
-# 🌐 NetWorx Trial Reset
-
 <div align="center">
+
+<img src="https://www.softperfect.com/products/networx/logo.svg" alt="NetWorx Logo" width="120"/>
+
+# 🌐 NetWorx Trial Reset
 
 ![Python Version](https://img.shields.io/badge/python-3.7+-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey.svg)
