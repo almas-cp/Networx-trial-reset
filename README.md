@@ -1,154 +1,74 @@
+# 🌐 NetWorx Trial Reset
+
 <div align="center">
 
-# 🌐 NetWorx Database Patcher
+![Python Version](https://img.shields.io/badge/python-3.7+-blue.svg)
+![Platform](https://img.shields.io/badge/platform-Windows-lightgrey.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Status](https://img.shields.io/badge/status-active-success.svg)
 
-<p align="center">
-  <img src="https://img.shields.io/badge/python-3.7+-blue.svg" alt="Python Version">
-  <img src="https://img.shields.io/badge/platform-windows-lightgrey.svg" alt="Platform">
-  <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License">
-</p>
+**A beautiful CLI tool to automatically manage NetWorx trial and reminder dates**
 
-<p align="center">
-  <strong>A beautiful CLI tool to manage NetWorx trial and reminder dates</strong>
-</p>
+*Stop worrying about trial expirations with elegant automation*
 
-<p align="center">
-  Automatically updates NetWorx database configuration with elegant terminal UI
-</p>
+[Features](#-features) • [Installation](#-installation) • [Usage](#-usage) • [How It Works](#-how-it-works) • [Troubleshooting](#-troubleshooting)
 
 </div>
+
+---
+
+## 🎯 Overview
+
+**NetWorx Trial Reset** is a sleek Python script that automatically updates your NetWorx database configuration with smart date management. Built with a beautiful terminal interface powered by Rich, it handles the entire process seamlessly - from stopping the NetWorx service to updating the database and restarting it.
+
+### Why Use This?
+
+- 🎨 **Beautiful Terminal UI** - Rich, colorful output with progress indicators and tables
+- 🔄 **Zero Manual Work** - Fully automated process management
+- 🛡️ **Safe & Reliable** - Proper error handling and automatic service recovery
+- ⚡ **Lightning Fast** - Updates complete in seconds
+- 🔍 **Smart Detection** - Automatically finds NetWorx installation
+- 📊 **Visual Feedback** - Clear before/after value comparison
 
 ---
 
 ## ✨ Features
 
-- 🎨 **Beautiful Terminal UI** - Rich, colorful output with tables and progress indicators
-- 🔄 **Automatic Process Management** - Safely stops and restarts NetWorx during updates
-- 🔍 **Smart Detection** - Automatically finds NetWorx installation path
-- 📅 **Date Management** - Updates trial and reminder dates intelligently
-- ⚡ **Fast & Reliable** - Quick execution with comprehensive error handling
-- 📊 **Visual Feedback** - Clear before/after comparison of updated values
+### Core Functionality
 
-## 🚀 Quick Start
+- **Automatic Process Management**
+  - Detects running NetWorx processes
+  - Safely terminates before database modification
+  - Auto-restarts after successful update
 
-### Prerequisites
+- **Intelligent Date Handling**
+  - Updates `TrialDate` to current system date
+  - Sets `NextReminder` to 30 days ahead
+  - Proper date formatting (YYYY-MM-DD)
 
-- Python 3.7 or higher
-- NetWorx installed on Windows
-- Administrator privileges (recommended)
+- **Beautiful CLI Interface**
+  - Colorful progress spinners
+  - Comparison tables (old vs new values)
+  - Clear status indicators (✓ ✗ ⚠)
+  - Bordered panels and formatted output
 
-### Installation
-
-1. Clone or download this repository:
-```bash
-git clone [repository-url]
-cd networx-patcher
-```
-
-2. Install required dependencies:
-```bash
-pip install rich psutil
-```
-
-### Usage
-
-Simply run the script:
-```bash
-python script.py
-```
-
-The script will:
-1. 🔍 Locate your NetWorx installation
-2. ⏸️ Stop the NetWorx process
-3. 📝 Update the database with current dates
-4. ▶️ Restart NetWorx automatically
-
-## 📋 What It Does
-
-The script modifies two key parameters in the NetWorx configuration database:
-
-| Parameter | Updated To |
-|-----------|------------|
-| `TrialDate` | Current system date |
-| `NextReminder` | Current date + 30 days |
-
-## 🎯 How It Works
-
-```
-┌─────────────────────────────────────┐
-│  1. Find NetWorx Installation      │
-│  2. Stop Running Process            │
-│  3. Connect to SQLite Database      │
-│  4. Update Configuration Values     │
-│  5. Commit Changes                  │
-│  6. Restart NetWorx                 │
-└─────────────────────────────────────┘
-```
-
-## 📸 Screenshot
-
-The script provides a beautiful terminal interface with:
-- Color-coded status messages
-- Progress spinners for operations
-- Before/after comparison tables
-- Clear success/error indicators
-
-## 🛠️ Technical Details
-
-### Database Location
-```
-C:\ProgramData\SoftPerfect\NetWorx\NetWorx.db3
-```
-
-### Dependencies
-- `sqlite3` - Database operations
-- `rich` - Terminal UI and formatting
-- `psutil` - Process management
-- `pathlib` - Path handling
-- `datetime` - Date calculations
-
-### Supported Installation Paths
-The script automatically checks:
-- `C:\Program Files\NetWorx\`
-- `C:\Program Files (x86)\NetWorx\`
-- `C:\Program Files\SoftPerfect\NetWorx\`
-- `C:\Program Files (x86)\SoftPerfect\NetWorx\`
-
-## ⚠️ Important Notes
-
-- 🔐 Run with administrator privileges for best results
-- 💾 The script automatically backs up by stopping NetWorx before modifications
-- 🔄 NetWorx will be restarted automatically after updates
-- ⚡ Safe to run multiple times - idempotent operation
-
-## 🐛 Troubleshooting
-
-### Database Not Found
-Ensure NetWorx is installed in the default location or modify the `db_path` parameter.
-
-### Permission Denied
-Run your terminal as Administrator.
-
-### NetWorx Won't Restart
-Manually start NetWorx from the Start menu or installation directory.
-
-## 📝 License
-
-This project is open source and available under the MIT License.
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome!
-
-## ⚡ Disclaimer
-
-This tool is for educational purposes. Use at your own risk. Always ensure you have proper backups before modifying application databases.
+- **Robust Error Handling**
+  - Database validation checks
+  - File existence verification
+  - Graceful failure recovery
+  - Service restart even on errors
 
 ---
 
-<div align="center">
-  <p>Made with ❤️ and Python</p>
-  <p>
-    <sub>If you find this useful, consider giving it a ⭐</sub>
-  </p>
-</div>
+## 🚀 Installation
+
+### Prerequisites
+
+Before you begin, ensure you have:
+
+- **Python 3.7+** installed on your system
+- **NetWorx** installed on Windows
+- **Administrator privileges** (recommended for process management)
+
+### Step 1: Clone the Repository
+
