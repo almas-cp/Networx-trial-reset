@@ -7,9 +7,9 @@
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 
-**A beautiful CLI tool to automatically manage NetWorx trial and reminder dates**
+**A beautiful CLI tool to automatically reset NetWorx trial period**
 
-*Stop worrying about trial expirations with elegant automation*
+*Extend your NetWorx bandwidth monitoring trial with elegant automation*
 
 [Features](#-features) • [Installation](#-installation) • [Usage](#-usage) • [How It Works](#-how-it-works) • [Troubleshooting](#-troubleshooting)
 
@@ -19,12 +19,16 @@
 
 ## 🎯 Overview
 
-**NetWorx Trial Reset** is a sleek Python script that automatically updates your NetWorx database configuration with smart date management. Built with a beautiful terminal interface powered by Rich, it handles the entire process seamlessly - from stopping the NetWorx service to updating the database and restarting it.
+**NetWorx Trial Reset** is a sleek Python script that automatically resets the trial period for [NetWorx](https://www.softperfect.com/products/networx/) - a powerful bandwidth monitoring and data usage reporting tool for Windows. Built with a beautiful terminal interface powered by Rich, it handles the entire process seamlessly - from stopping the NetWorx service to updating the database and restarting it.
 
-### Why Use This?
+### What is NetWorx?
+
+NetWorx is a versatile bandwidth monitoring tool that helps you track your Internet connection usage, measure connection speed, and identify network issues. It offers a fully-featured 30-day trial period, after which it requires a license purchase[attached_file:1].
+
+### Why Use This Script?
 
 - 🎨 **Beautiful Terminal UI** - Rich, colorful output with progress indicators and tables
-- 🔄 **Zero Manual Work** - Fully automated process management
+- 🔄 **Zero Manual Work** - Fully automated trial reset process
 - 🛡️ **Safe & Reliable** - Proper error handling and automatic service recovery
 - ⚡ **Lightning Fast** - Updates complete in seconds
 - 🔍 **Smart Detection** - Automatically finds NetWorx installation
@@ -42,9 +46,9 @@
   - Auto-restarts after successful update
 
 - **Intelligent Date Handling**
-  - Updates `TrialDate` to current system date
+  - Resets `TrialDate` to current system date
   - Sets `NextReminder` to 30 days ahead
-  - Proper date formatting (YYYY-MM-DD)
+  - Extends trial period automatically
 
 - **Beautiful CLI Interface**
   - Colorful progress spinners
@@ -66,9 +70,9 @@
 
 Before you begin, ensure you have:
 
+- **NetWorx** installed on Windows ([Download here](https://www.softperfect.com/products/networx/))
 - **Python 3.7+** installed on your system
-- **NetWorx** installed on Windows
-- **Administrator privileges** (recommended for process management)
+- **Administrator privileges** (required for process management)
 
 ### Step 1: Clone the Repository
 
@@ -91,58 +95,35 @@ That's it! You're ready to go. 🎉
 
 ### Basic Usage
 
-Simply run the script with administrator privileges:
+Run the script with administrator privileges:
 
 ```bash
 python script.py
 ```
 
+> **Note:** Administrator privileges are required to stop and restart NetWorx processes.
+
 ### What Happens When You Run It
 
 ```
 ┌─────────────────────────────────────────┐
-│ 1. � Locates NeitWorx Installation │
-│ 2. � CStops Running NetWorx Process │
+│ 1. 🔍 Locates NetWorx Installation │
+│ 2. 🛑 Stops Running NetWorx Process │
 │ 3. 🔌 Connects to SQLite Database │
-│ 4. ✏️ Updates Configuration Values │
+│ 4. ✏️ Resets Trial Date Values │
 │ 5. 💾 Commits All Changes │
 │ 6. ▶️ Restarts NetWorx Service │
 └─────────────────────────────────────────┘
 ```
 
-### Expected Output
+### What Gets Updated
 
-The script provides beautiful, color-coded output:
+| Parameter | Description | New Value |
+|-----------|-------------|-----------|
+| **TrialDate** | Trial start date | Current system date |
+| **NextReminder** | Next trial reminder | Current date + 30 days |
 
-```
-╭──────────────────────────────────────╮
-│ NetWorx Database Updater │
-│ Updating trial and reminder dates │
-╰──────────────────────────────────────╯
-
-╭────────────────────┬──────────────╮
-│ Date Type │ Value │
-├────────────────────┼──────────────┤
-│ Current Date │ 2025-10-22 │
-│ Reminder Date (+30)│ 2025-11-21 │
-╰────────────────────┴──────────────╯
-
-✓ NetWorx process terminated
-
-╭─────────────┬──────────────┬──────────────┬────────╮
-│ Parameter │ Old Value │ New Value │ Status │
-├─────────────┼──────────────┼──────────────┼────────┤
-│ TrialDate │ 2025-08-14 │ 2025-10-22 │ ✓ │
-│ NextReminder│ 2025-08-14 │ 2025-11-21 │ ✓ │
-╰─────────────┴──────────────┴──────────────┴────────╯
-
-╭────────────────────────────────────╮
-│ ✓ Database updated successfully! │
-│ File: NetWorx.db3 │
-╰────────────────────────────────────╯
-
-✓ NetWorx restarted
-```
+This effectively resets your NetWorx trial period to start from today.
 
 ---
 
@@ -159,7 +140,7 @@ The script provides beautiful, color-coded output:
 
 ### Supported NetWorx Paths
 
-The script automatically searches these locations:
+The script automatically searches these common installation locations:
 
 - `C:\Program Files\NetWorx\networx.exe`
 - `C:\Program Files (x86)\NetWorx\networx.exe`
@@ -180,9 +161,13 @@ The script automatically searches these locations:
 
 ## 📋 How It Works
 
-### Database Schema
+### The Trial Mechanism
 
-The script modifies the `CONFIG` table in NetWorx's SQLite database:
+NetWorx stores its trial information in an SQLite database located at `C:\ProgramData\SoftPerfect\NetWorx\NetWorx.db3`. The `CONFIG` table contains trial-related parameters that track when the trial started and when to show the next reminder[attached_file:1].
+
+### Database Modifications
+
+The script modifies two key parameters:
 
 ```sql
 UPDATE CONFIG
@@ -196,21 +181,13 @@ WHERE PARAM_NAME = 'NextReminder';
 
 ### Process Flow
 
-```mermaid
-graph TD
-A[Start Script] --> B{NetWorx Running?}
-B -->|Yes| C[Stop Process]
-B -->|No| D[Proceed]
-C --> D
-D --> E[Connect to Database]
-E --> F[Read Current Values]
-F --> G[Update TrialDate]
-G --> H[Update NextReminder]
-H --> I[Commit Changes]
-I --> J[Close Database]
-J --> K[Restart NetWorx]
-K --> L[Complete]
-```
+1. **Detection** - Locates NetWorx installation and running processes
+2. **Termination** - Safely stops NetWorx.exe if running (required for database access)
+3. **Connection** - Opens SQLite database connection
+4. **Reading** - Retrieves current trial configuration values
+5. **Updating** - Resets TrialDate to today and NextReminder to +30 days
+6. **Committing** - Saves changes to database
+7. **Restarting** - Launches NetWorx application with reset trial
 
 ---
 
@@ -223,18 +200,20 @@ K --> L[Complete]
 **Problem:** Script can't locate `NetWorx.db3`
 
 **Solution:**
-- Verify NetWorx is installed
+- Verify NetWorx is properly installed
 - Check the path: `C:\ProgramData\SoftPerfect\NetWorx\`
-- Modify the `db_path` parameter in the script if installed elsewhere
+- Run NetWorx at least once before using this script
+- Modify the `db_path` parameter if you have a custom installation
 
 #### Permission Denied
 
 **Problem:** Access denied when modifying database
 
 **Solution:**
-- Run terminal/command prompt as **Administrator**
-- Close NetWorx manually before running script
-- Check file permissions on the database
+- **Run terminal/command prompt as Administrator** (required)
+- Ensure NetWorx is not running in the background
+- Check file permissions on the database directory
+- Disable antivirus temporarily if it's blocking access
 
 #### NetWorx Won't Restart
 
@@ -242,17 +221,29 @@ K --> L[Complete]
 
 **Solution:**
 - Manually start NetWorx from Start menu
-- Check if NetWorx executable path is correct
-- Verify no other processes are blocking restart
+- Verify the executable path is correct
+- Check Windows Event Viewer for startup errors
+- Ensure no other processes are blocking the restart
 
-#### Table 'config' Not Found
+#### Table 'CONFIG' Not Found
 
-**Problem:** Error message about missing config table
+**Problem:** Error message about missing CONFIG table
 
 **Solution:**
 - The table name is case-sensitive (`CONFIG` not `config`)
 - Latest version handles this automatically
-- Verify you're using NetWorx and not a similar application
+- Ensure you're using NetWorx and not a different monitoring tool
+- Try running NetWorx once to initialize the database
+
+#### Script Works But Trial Still Expired
+
+**Problem:** Trial period not reset after running script
+
+**Solution:**
+- Make sure NetWorx was fully closed before running script
+- Restart your computer after running the script
+- Clear NetWorx cache in `%APPDATA%\NetWorx\`
+- Check if your NetWorx version uses a different database structure
 
 ---
 
@@ -260,21 +251,31 @@ K --> L[Complete]
 
 ### Custom Database Path
 
-To use a different database location:
+If NetWorx is installed in a non-standard location:
 
 ```python
 update_networx_config(db_path=r'C:\Custom\Path\NetWorx.db3')
 ```
 
-### Modify Reminder Offset
+### Modify Trial Duration
 
-To change the 30-day reminder period, edit this line:
+To change the trial duration from 30 days:
 
 ```python
-reminder_date = (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d')
+reminder_date = (datetime.now() + timedelta(days=60)).strftime('%Y-%m-%d')
 #                                              ^^
-#                                    Change this number
+#                        Change 30 to your preferred number of days
 ```
+
+### Schedule Automatic Resets
+
+You can use Windows Task Scheduler to run this script automatically:
+
+1. Open Task Scheduler
+2. Create a new task
+3. Set trigger (e.g., every 25 days)
+4. Action: `python C:\path\to\script.py`
+5. Run with highest privileges enabled
 
 ---
 
@@ -292,12 +293,14 @@ Contributions are what make the open-source community amazing! Any contributions
 
 ### Ideas for Contributions
 
-- 🌍 Add support for other operating systems
-- 🎨 More terminal UI themes
-- 📅 Custom date formats
-- 🔄 Automatic scheduling (cron/task scheduler)
-- 🔔 Desktop notifications
-- 📝 Logging functionality
+- 🍎 Add support for macOS version of NetWorx
+- 🐧 Add support for Linux version of NetWorx
+- 🎨 More terminal UI themes and color schemes
+- 📅 Custom date formats and configurations
+- 🔄 Automatic scheduling with built-in task creation
+- 🔔 Desktop notifications for successful resets
+- 📝 Detailed logging with rotation
+- 🔐 Backup and restore functionality
 
 ---
 
@@ -319,18 +322,26 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ## ⚠️ Disclaimer
 
-**Important Notice:**
+**Important Legal Notice:**
 
-- This tool is for **educational purposes** only
-- Use at your own risk
+- This tool is for **educational and testing purposes only**
+- Use at your own risk and responsibility
+- This script modifies NetWorx trial data to extend evaluation periods
+- **Please support the developers:** If you find NetWorx useful, consider [purchasing a license](https://www.softperfect.com/products/networx/)
+- Not affiliated with, endorsed by, or associated with SoftPerfect Research
+- Modifying software trials may violate terms of service
 - Always maintain proper backups before modifying application databases
-- Ensure you comply with NetWorx's terms of service
-- Not affiliated with or endorsed by SoftPerfect
+- The author is not responsible for any consequences of using this tool
+
+### About NetWorx
+
+NetWorx is developed by [SoftPerfect Research](https://www.softperfect.com/) and offers a legitimate 30-day trial period. If you use NetWorx regularly, please consider supporting the developers by purchasing a license[attached_file:1].
 
 ---
 
 ## 🙏 Acknowledgments
 
+- [SoftPerfect Research](https://www.softperfect.com/) - For creating NetWorx
 - [Rich](https://github.com/Textualize/rich) - For the beautiful terminal interface
 - [psutil](https://github.com/giampaolo/psutil) - For cross-platform process utilities
 - The Python community for excellent documentation
@@ -345,13 +356,26 @@ Having issues? Here's how to get help:
 - 💡 **Feature Requests:** [Open an issue](https://github.com/almas-cp/Networx-trial-reset/issues)
 - 💬 **Questions:** [Start a discussion](https://github.com/almas-cp/Networx-trial-reset/discussions)
 
+For NetWorx-specific issues, please contact [SoftPerfect Support](https://www.softperfect.com/support/)[attached_file:1].
+
+---
+
+## 📚 Additional Resources
+
+- [NetWorx Official Website](https://www.softperfect.com/products/networx/)
+- [NetWorx Features](https://www.softperfect.com/products/networx/#features)
+- [NetWorx Download](https://www.softperfect.com/products/networx/#download)
+- [Purchase NetWorx License](https://www.softperfect.com/products/networx/)
+
 ---
 
 <div align="center">
 
 **Made with ❤️ and Python**
 
-*If you find this tool useful, consider giving it a ⭐*
+*If you find NetWorx useful, please support the developers by purchasing a license*
+
+*If you find this tool helpful, consider giving it a ⭐*
 
 [⬆ Back to Top](#-networx-trial-reset)
 
